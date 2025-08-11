@@ -1,62 +1,339 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>上传民俗照片</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>上传民俗照片 - 西北民俗文化数字博物馆</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    .upload-form { max-width: 500px; margin: 0 auto; padding: 20px; }
-    .form-group { margin-bottom: 15px; }
-    input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; }
-    button { background: #c29d61; color: white; border: none; padding: 10px; cursor: pointer; }
+    :root {
+      --primary-color: #8B4513; /* 黄土色 */
+      --secondary-color: #A0522D; /* 棕色 */
+      --accent-color: #CD853F; /* 浅棕色 */
+      --light-color: #F5DEB3; /* 小麦色 */
+      --text-color: #333;
+      --text-light: #fff;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Noto Serif SC', serif;
+      background-color: #f9f5ed;
+      color: var(--text-color);
+      line-height: 1.6;
+      background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="%23A0522D" stroke-width="0.5" opacity="0.2"/></svg>');
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    /* 头部样式 */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+    
+    .page-header h2 {
+      font-size: 2.2rem;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .page-header h2::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background-color: var(--accent-color);
+    }
+    
+    .page-header p {
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    /* 上传表单样式 */
+    .upload-form {
+      background-color: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+      border-color: var(--accent-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(205, 133, 63, 0.2);
+    }
+    
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      background-size: 1em;
+    }
+    
+    /* 文件上传区域 */
+    .file-upload {
+      border: 2px dashed #ddd;
+      padding: 30px;
+      text-align: center;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+      position: relative;
+    }
+    
+    .file-upload:hover {
+      border-color: var(--accent-color);
+    }
+    
+    .file-upload i {
+      font-size: 3rem;
+      color: var(--accent-color);
+      margin-bottom: 15px;
+    }
+    
+    .file-upload p {
+      margin-bottom: 15px;
+      color: #666;
+    }
+    
+    .file-input {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    
+    .file-name {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--secondary-color);
+    }
+    
+    /* 按钮样式 */
+    .btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: var(--text-light);
+      padding: 12px 30px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-decoration: none;
+      width: 100%;
+    }
+    
+    .btn:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+    
+    .btn i {
+      margin-right: 8px;
+    }
+    
+    /* 预览图片 */
+    .preview-container {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+    }
+    
+    .preview-image {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 4px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .upload-form {
+        padding: 30px 20px;
+      }
+      
+      .page-header h2 {
+        font-size: 1.8rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 15px;
+      }
+      
+      .page-header h2 {
+        font-size: 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="upload-form">
-    <h2>上传民俗照片</h2>
-    <form id="uploadForm">
+  <div class="container">
+    <div class="page-header">
+      <h2><i class="fas fa-upload"></i> 上传民俗资料</h2>
+      <p>分享您所了解的西北民俗文化，共同丰富我们的数字博物馆</p>
+    </div>
+    
+    <form id="uploadForm" class="upload-form">
       <div class="form-group">
-        <label>民俗名称</label>
-        <input type="text" id="title" required>
+        <label for="title">民俗名称</label>
+        <input type="text" id="title" class="form-control" placeholder="例如：安塞腰鼓、陕北剪纸" required>
       </div>
+      
       <div class="form-group">
-        <label>所在地区</label>
-        <select id="region" required>
-          <option value="">请选择</option>
+        <label for="region">所在地区</label>
+        <select id="region" class="form-control" required>
+          <option value="">请选择地区</option>
           <option value="陕北">陕北</option>
           <option value="关中">关中</option>
           <option value="河西走廊">河西走廊</option>
         </select>
       </div>
+      
       <div class="form-group">
-        <label>描述（讲讲这个民俗的故事）</label>
-        <textarea id="description" rows="4"></textarea>
+        <label for="description">民俗描述</label>
+        <textarea id="description" class="form-control" placeholder="请详细描述这一民俗的历史渊源、文化内涵、表现形式等..." required></textarea>
       </div>
+      
       <div class="form-group">
         <label>上传图片</label>
-        <input type="file" id="image" accept="image/*" required>
+        <div class="file-upload" id="fileUploadArea">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>点击或拖拽图片到此处上传</p>
+          <span class="file-name" id="fileName"></span>
+          <input type="file" id="image" class="file-input" accept="image/*" required>
+        </div>
+        <div class="preview-container" id="previewContainer">
+          <img src="#" alt="预览图" class="preview-image" id="previewImage">
+        </div>
       </div>
-      <button type="submit">提交</button>
+      
+      <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> 提交上传</button>
     </form>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.13.0/dist/av-min.js"></script>
   <script>
+    // 初始化LeanCloud
     AV.init({
       appId: "HPgxPyGzlNy4wqZL6THkjdUB-gzGzoHsz",
       appKey: "Fo9F9yHdMsbBBfnPK9gOvtTm",
       serverURL: "https://hpgxpygz.lc-cn-n1-shared.com"
     });
 
+    // 图片预览功能
+    document.getElementById('image').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById('fileName').textContent = file.name;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const previewContainer = document.getElementById('previewContainer');
+          const previewImage = document.getElementById('previewImage');
+          
+          previewImage.src = event.target.result;
+          previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // 拖拽上传功能
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    fileUploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileUploadArea.style.borderColor = 'var(--accent-color)';
+      fileUploadArea.style.backgroundColor = 'rgba(205, 133, 63, 0.1)';
+    });
+    
+    fileUploadArea.addEventListener('dragleave', () => {
+      fileUploadArea.style.borderColor = '#ddd';
+      fileUploadArea.style.backgroundColor = 'transparent';
+    });
+    
+    fileUploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileUploadArea.style.borderColor = '#ddd';
+      fileUploadArea.style.backgroundColor = 'transparent';
+      
+      if (e.dataTransfer.files.length) {
+        document.getElementById('image').files = e.dataTransfer.files;
+        const event = new Event('change');
+        document.getElementById('image').dispatchEvent(event);
+      }
+    });
+
     // 处理表单提交
     document.getElementById('uploadForm').addEventListener('submit', function(e) {
-      e.preventDefault(); // 阻止默认提交
-
+      e.preventDefault();
+      
       // 获取表单数据
       const title = document.getElementById('title').value;
       const region = document.getElementById('region').value;
       const description = document.getElementById('description').value;
       const imageFile = document.getElementById('image').files[0];
-
+      
+      // 显示加载状态
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上传中...';
+      submitBtn.disabled = true;
+      
       // 上传图片到LeanCloud
       const file = new AV.File(imageFile.name, imageFile);
       file.save().then(savedFile => {
@@ -69,10 +346,14 @@
         folkItem.set('imageUrl', savedFile.url()); // 存储图片的网络地址
         return folkItem.save();
       }).then(() => {
-        alert('上传成功！');
-        window.location = 'index.html'; // 跳回首页
+        alert('上传成功！感谢您的贡献！');
+        window.location.href = 'index.html'; // 跳回首页
       }).catch(error => {
-        alert('上传失败：' + error.message);
+        console.error('上传失败:', error);
+        alert('上传失败：' + (error.message || '请稍后再试'));
+      }).finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
       });
     });
   </script>
