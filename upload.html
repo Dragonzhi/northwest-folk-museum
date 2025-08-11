@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>上传民俗照片</title>
+  <style>
+    .upload-form { max-width: 500px; margin: 0 auto; padding: 20px; }
+    .form-group { margin-bottom: 15px; }
+    input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; }
+    button { background: #c29d61; color: white; border: none; padding: 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="upload-form">
+    <h2>上传民俗照片</h2>
+    <form id="uploadForm">
+      <div class="form-group">
+        <label>民俗名称</label>
+        <input type="text" id="title" required>
+      </div>
+      <div class="form-group">
+        <label>所在地区</label>
+        <select id="region" required>
+          <option value="">请选择</option>
+          <option value="陕北">陕北</option>
+          <option value="关中">关中</option>
+          <option value="河西走廊">河西走廊</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>描述（讲讲这个民俗的故事）</label>
+        <textarea id="description" rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <label>上传图片</label>
+        <input type="file" id="image" accept="image/*" required>
+      </div>
+      <button type="submit">提交</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.13.0/dist/av-min.js"></script>
+  <script>
+    AV.init({
+      appId: "你的AppID",
+      appKey: "你的AppKey",
+      serverURL: "你的服务器地址"
+    });
+
+    // 处理表单提交
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+      e.preventDefault(); // 阻止默认提交
+
+      // 获取表单数据
+      const title = document.getElementById('title').value;
+      const region = document.getElementById('region').value;
+      const description = document.getElementById('description').value;
+      const imageFile = document.getElementById('image').files[0];
+
+      // 上传图片到LeanCloud
+      const file = new AV.File(imageFile.name, imageFile);
+      file.save().then(savedFile => {
+        // 图片上传成功后，保存文字信息到数据库
+        const FolkCulture = AV.Object.extend('folkCulture');
+        const folkItem = new FolkCulture();
+        folkItem.set('title', title);
+        folkItem.set('region', region);
+        folkItem.set('description', description);
+        folkItem.set('imageUrl', savedFile.url()); // 存储图片的网络地址
+        return folkItem.save();
+      }).then(() => {
+        alert('上传成功！');
+        window.location = 'index.html'; // 跳回首页
+      }).catch(error => {
+        alert('上传失败：' + error.message);
+      });
+    });
+  </script>
+</body>
+</html>

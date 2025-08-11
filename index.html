@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>西北民俗文化数字博物馆</title>
+  <style>
+    /* 简单样式，让页面整洁 */
+    body { font-family:  Arial; max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .header { text-align: center; margin-bottom: 30px; }
+    .upload-btn { background: #c29d61; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+    .filter { margin: 20px 0; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+    .item { border: 1px solid #ddd; padding: 10px; }
+    .item img { width: 100%; height: 200px; object-fit: cover; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>西北民俗文化数字博物馆</h1>
+    <button class="upload-btn" onclick="window.location='upload.html'">上传民俗照片</button>
+  </div>
+
+  <!-- 分类筛选 -->
+  <div class="filter">
+    <select id="regionFilter" onchange="filterItems()">
+      <option value="">所有地区</option>
+      <option value="陕北">陕北</option>
+      <option value="关中">关中</option>
+      <option value="河西走廊">河西走廊</option>
+    </select>
+  </div>
+
+  <!-- 图片画廊 -->
+  <div class="gallery" id="gallery"></div>
+
+  <!-- 引入LeanCloud SDK（后端工具） -->
+  <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.13.0/dist/av-min.js"></script>
+  <script>
+    // 初始化LeanCloud（替换成你的AppID和AppKey，在LeanCloud应用设置里找）
+    AV.init({
+      appId: "你的AppID",
+      appKey: "你的AppKey",
+      serverURL: "你的服务器地址"
+    });
+
+    // 加载所有民俗内容
+    function loadItems(region = '') {
+      const query = new AV.Query('folkCulture');
+      if (region) query.equalTo('region', region); // 按地区筛选
+      query.descending('createdAt'); // 最新的在前面
+      query.find().then(items => {
+        const gallery = document.getElementById('gallery');
+        gallery.innerHTML = ''; // 清空现有内容
+        items.forEach(item => {
+          const data = item.toJSON();
+          gallery.innerHTML += `
+            <div class="item">
+              <img src="${data.imageUrl}" alt="${data.title}">
+              <h3>${data.title}</h3>
+              <p>地区：${data.region}</p>
+              <p>${data.description.substring(0, 50)}...</p>
+            </div>
+          `;
+        });
+      });
+    }
+
+    // 筛选功能
+    function filterItems() {
+      const region = document.getElementById('regionFilter').value;
+      loadItems(region);
+    }
+
+    // 页面加载时显示所有内容
+    loadItems();
+  </script>
+</body>
+</html>
