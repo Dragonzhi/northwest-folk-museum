@@ -521,7 +521,43 @@
     border-color: white transparent transparent transparent;
     }
 
+    .search-box {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+    display: flex;
+  } 
 
+  .search-box input {
+    width: 100%;
+    padding: 12px 20px 12px 45px;
+    border: 1px solid #ddd;
+    border-radius: 30px 0 0 30px;
+    font-size: 1rem;
+    transition: all 0.3s;
+  }
+
+  .search-btn {
+    padding: 0 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0 30px 30px 0;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .search-btn:hover {
+    background-color: var(--secondary-color);
+  }
+
+  .search-box i:first-child {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+  }
 
 
   </style>
@@ -541,7 +577,8 @@
     <div class="search-filter">
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="搜索民俗名称或描述..." onkeyup="searchItems()">
+        <input type="text" id="searchInput" placeholder="搜索民俗名称或描述...">
+        <button class="search-btn" onclick="searchItems()"><i class="fas fa-search"></i>→</button>
       </div>
       <div class="filter-group">
         <select id="regionFilter" onchange="filterItems()">
@@ -702,13 +739,51 @@
       loadItems(region, sort);
     }
     
-    // 搜索功能
-    function searchItems() {
+        function searchItems() {
       const search = document.getElementById('searchInput').value.trim();
-      const region = document.getElementById('regionFilter').value;
-      const sort = document.getElementById('sortFilter').value;
-      loadItems(region, sort, search);
+      if (!search) {
+        loadItems(); // 如果搜索内容为空，显示所有项目
+        return;
+      }
+      
+      // 仅搜索标题包含关键词的内容
+      const query = new AV.Query('folkCulture').contains('title', search);
+      
+      query.find().then(items => {
+        const gallery = document.getElementById('gallery');
+        gallery.innerHTML = '';
+        
+        if (items.length === 0) {
+          gallery.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#666;">没有找到匹配的民俗项目</div>';
+          return;
+        }
+        
+        items.forEach(item => {
+          const data = item.toJSON();
+          const date = new Date(data.createdAt).toLocaleDateString();
+          
+          const itemElement = document.createElement('div');
+          itemElement.className = 'item';
+          itemElement.innerHTML = `
+            <img src="${data.imageUrl}" alt="${data.title}" class="item-img" onclick="showDetail('${data.objectId}')">
+            <div class="item-content">
+              <h3>${data.title}</h3>
+              <div class="item-meta">
+                <span><i class="fas fa-map-marker-alt"></i> ${data.region}</span>
+                <span><i class="far fa-clock"></i> ${date}</span>
+              </div>
+              <p>${data.description.substring(0, 100)}...</p>
+              <a href="#" class="item-btn" onclick="showDetail('${data.objectId}'); return false;">查看详情</a>
+            </div>
+          `;
+          
+          gallery.appendChild(itemElement);
+        });
+      }).catch(error => {
+        console.error('搜索失败:', error);
+      });
     }
+
     
     // 显示详情模态框
     function showDetail(itemId) {
