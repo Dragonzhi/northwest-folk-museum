@@ -450,6 +450,80 @@
         grid-template-columns: 1fr;
       }
     }
+    /* 社交图标悬浮二维码样式 */
+    .social-links {
+    position: relative;
+    }
+
+    .social-item {
+    position: relative;
+    display: inline-block;
+    }
+
+    .qrcode {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    padding: 10px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 10;
+    margin-bottom: 10px;
+    }
+
+    .qrcode img {
+    width: 120px;
+    height: 120px;
+    }
+
+    .social-item:hover .qrcode {
+    display: block;
+    }
+
+    /* 显示账号文本 */
+    .social-text {
+    margin-left: 5px;
+    }
+        
+    /* 账号信息悬浮框样式 */
+    .social-item .info-box {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    padding: 8px 12px;
+    background-color: white;
+    color: #333;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 10;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    }
+
+    .social-item:hover .info-box {
+    display: block;
+    }
+
+    /* 添加小三角形指示 */
+    .social-item .info-box::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+    }
+
+
+
+
   </style>
 </head>
 <body>
@@ -493,14 +567,48 @@
       <h3>西北民俗文化数字博物馆</h3>
       <p>致力于收集、保护和展示西北地区丰富的民俗文化遗产</p>
       <div class="social-links">
-        <a href="#"><i class="fab fa-weixin"></i></a>
-        <a href="#"><i class="fab fa-weibo"></i></a>
-        <a href="#"><i class="fab fa-qq"></i></a>
-        <a href="#"><i class="fas fa-envelope"></i></a>
+        <!-- 微信图标带悬浮二维码 -->
+        <div class="social-item">
+          <a href="#"><i class="fab fa-weixin"></i></a>
+          <div class="qrcode">
+            <img src="asset\学校二维码\wexin.png" alt="微信二维码">
+          </div>
+        </div>
+        
+        <!-- 微博图标带悬浮二维码 -->
+        <div class="social-item">
+          <a href="#"><i class="fab fa-weibo"></i></a>
+          <div class="qrcode">
+            <img src="asset\学校二维码\webo.png" alt="微博二维码">
+          </div>
+        </div>
+        
+        <!-- QQ显示 -->
+        <div class="social-item">
+          <a href="tencent://message/?uin=3248569738" title="QQ联系" class="social-link">
+            <i class="fab fa-qq"></i>
+          </a>
+          <div class="info-box">
+            <p>QQ: 3248569738</p>
+          </div>
+        </div>
+        
+        <!-- 邮箱显示 -->
+        <div class="social-item">
+          <a href="mailto:3248569738@qq.com" title="发送邮件" class="social-link">
+            <i class="fas fa-envelope"></i>
+          </a>
+          <div class="info-box">
+            <p>邮箱: 3248569738@qq.com</p>
+          </div>
+        </div>
+
+
       </div>
       <p class="copyright">© 2025 西北民俗文化数字博物馆 版权所有</p>
     </div>
   </footer>
+
 
   <!-- 详情模态框 -->
   <div class="modal" id="detailModal">
